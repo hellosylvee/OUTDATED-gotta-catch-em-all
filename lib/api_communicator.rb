@@ -1,3 +1,5 @@
+require_relative "../models/pokemon.rb"
+
 require 'json'
 require 'pry'
 require 'httparty'
@@ -5,10 +7,8 @@ require 'httparty'
   class ApiCommunicator
     URL = "http://pokeapi.co/api/v2/pokemon"
 
-    def get_pokemons(pokemon_name)
-      # uri = URI.parse(URL)
-      # response = Net::HTTP.get_response(uri)
-      response = HTTParty.get("#{URL}/#{pokemon_name}")
+    def self.get_pokemons
+      response = HTTParty.get("#{URL}/#{pokemon}")
       JSON.parse(response.body)
     end
 
@@ -23,9 +23,14 @@ require 'httparty'
       result = "#{pokemon_name.capitalize} is a type of #{result["type"]} pokemon with a base experience of #{result["base_xp"]}!"
       # {"name"=>"pikachu", "type"=>"electric", "base_xp"=>112}
     end
+
+    def self.storePokemons
+      self.get_pokemons.each do |pokemon|
+        binding.pry
+        Pokemon.create(name: pokemon["name"], type: pokemon["type"], base_xp: pokemon["base_experience"].to_i)
+      end
+    end
   end
-
-
 
 # response = RestClient.get("https://phalt-pokeapi.p.mashape.com/pokemon",
 #   {
